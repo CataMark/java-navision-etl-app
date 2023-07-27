@@ -1,0 +1,1642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries xmlns="http://catalin.anyinternational.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://catalin.anyinternational.com queries.xsd">
+    <step name="Production BOM Header" order="1">
+        <targetCallfront>truncate table nav.tbl_int_prod_bom_header_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[Description],
+                a.[Description 2],
+                a.[Search Name],
+                a.[Unit of Measure Code],
+                a.[Low-Level Code],
+                a.[Creation Date],
+                a.[Last Date Modified],
+                a.[Status],
+                a.[Version Nos_],
+                a.[No_ Series],
+                a.[Type],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Production BOM Header] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_prod_bom_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_bom_header_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Production BOM Line" order="2">
+        <targetCallfront>truncate table nav.tbl_int_prod_bom_line_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Production BOM No_],
+                a.[Version Code],
+                a.[Line No_],
+                a.[Type],
+                a.[No_],
+                a.[Description],
+                a.[Unit of Measure Code],
+                a.[Quantity],
+                a.[Position],
+                a.[Position 2],
+                a.[Position 3],
+                a.[Lead-Time Offset],
+                a.[Routing Link Code],
+                a.[Scrap _],
+                a.[Variant Code],
+                a.[Starting Date],
+                a.[Ending Date],
+                a.[Length],
+                a.[Width],
+                a.[Weight],
+                a.[Depth],
+                a.[Calculation Formula],
+                a.[Quantity per],
+                a.[Fitting Note],
+                a.[Parcel Code],
+                a.[Randament _],
+                a.[Rebut _],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Production BOM Line] as a
+            inner join [dbo].[Live_any$Production BOM Header] as b
+            on a.[Production BOM No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_prod_bom_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_bom_line_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Production BOM Version" order="3">
+        <targetCallfront>truncate table nav.tbl_int_prod_bom_vers_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Production BOM No_],
+                a.[Version Code],
+                a.[Description],
+                a.[Starting Date],
+                a.[Unit of Measure Code],
+                a.[Last Date Modified],
+                a.[Status],
+                a.[No_ Series],
+                a.[Location Code],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Production BOM Version] as a
+            inner join [dbo].[Live_any$Production BOM Header] as b
+            on a.[Production BOM No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_prod_bom_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_bom_vers_load</targetTable>
+        <!-- CALLBACK FOR ALL BOM TABLES -->
+        <targetCallback>call nav.prc_prod_bom_all_merge_load();</targetCallback>
+    </step>
+    <step name="Routing Header" order="4">
+        <targetCallfront>truncate table nav.tbl_int_routing_header_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[Description],
+                a.[Description 2],
+                a.[Search Description],
+                a.[Last Date Modified],
+                a.[Status],
+                a.[Type],
+                a.[Version Nos_],
+                a.[No_ Series],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Routing Header] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_routing_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_routing_header_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Routing Line" order="5">
+        <targetCallfront>truncate table nav.tbl_int_routing_line_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Routing No_],
+                a.[Version Code],
+                a.[Operation No_],
+                a.[Next Operation No_],
+                a.[Previous Operation No_],
+                a.[Type],
+                a.[No_],
+                a.[Work Center No_],
+                a.[Work Center Group Code],
+                a.[Description],
+                a.[Setup Time],
+                a.[Run Time],
+                a.[Wait Time],
+                a.[Move Time],
+                a.[Fixed Scrap Quantity],
+                a.[Lot Size],
+                a.[Scrap Factor _],
+                a.[Setup Time Unit of Meas_ Code],
+                a.[Run Time Unit of Meas_ Code],
+                a.[Wait Time Unit of Meas_ Code],
+                a.[Move Time Unit of Meas_ Code],
+                a.[Minimum Process Time],
+                a.[Maximum Process Time],
+                a.[Concurrent Capacities],
+                a.[Send-Ahead Quantity],
+                a.[Routing Link Code],
+                a.[Standard Task Code],
+                a.[Unit Cost per],
+                a.[Recalculate],
+                a.[Sequence No_ (Forward)],
+                a.[Sequence No_ (Backward)],
+                a.[Fixed Scrap Qty_ (Accum_)],
+                a.[Scrap Factor _ (Accumulated)],
+                a.[Machine Efficiency (_)],
+                a.[No_ Of Workers],
+                a.[Net Setup Time],
+                a.[Net Run Time],
+                a.[Description 2],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Routing Line] as a
+            inner join [dbo].[Live_any$Routing Header] as b
+            on a.[Routing No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_routing_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_routing_line_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Routing Version" order="6">
+        <targetCallfront>truncate table nav.tbl_int_routing_vers_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Routing No_],
+                a.[Version Code],
+                a.[Description],
+                a.[Starting Date],
+                a.[Status],
+                a.[Type],
+                a.[Last Date Modified],
+                a.[No_ Series],
+                a.[Location Code],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Routing Version] as a
+            inner join [dbo].[Live_any$Routing Header] as b
+            on a.[Routing No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_routing_header');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_routing_vers_load</targetTable>
+        <!-- CALLBACK FOR ALL ROUTING TABLES -->
+        <targetCallback>call nav.prc_routing_all_merge_load();</targetCallback>
+    </step>
+    <step name="Item" order="7">
+        <targetCallfront>truncate table nav.tbl_int_item_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[No_ 2],
+                a.[Description],
+                a.[Search Description],
+                a.[Description 2],
+                a.[Base Unit of Measure],
+                a.[Price Unit Conversion],
+                a.[Type],
+                a.[Inventory Posting Group],
+                a.[Shelf No_],
+                a.[Item Disc_ Group],
+                a.[Allow Invoice Disc_],
+                a.[Statistics Group],
+                a.[Commission Group],
+                a.[Unit Price],
+                a.[Price_Profit Calculation],
+                a.[Profit _],
+                a.[Costing Method],
+                a.[Unit Cost],
+                a.[Standard Cost],
+                a.[Last Direct Cost],
+                a.[Indirect Cost _],
+                a.[Cost is Adjusted],
+                a.[Allow Online Adjustment],
+                a.[Vendor No_],
+                a.[Vendor Item No_],
+                a.[Lead Time Calculation],
+                a.[Reorder Point],
+                a.[Maximum Inventory],
+                a.[Reorder Quantity],
+                a.[Alternative Item No_],
+                a.[Unit List Price],
+                a.[Duty Due _],
+                a.[Duty Code],
+                a.[Gross Weight],
+                a.[Net Weight],
+                a.[Units per Parcel],
+                a.[Unit Volume],
+                a.[Durability],
+                a.[Freight Type],
+                a.[Tariff No_],
+                a.[Duty Unit Conversion],
+                a.[Country_Region Purchased Code],
+                a.[Budget Quantity],
+                a.[Budgeted Amount],
+                a.[Budget Profit],
+                a.[Blocked],
+                a.[Last Date Modified],
+                a.[Last Time Modified],
+                a.[Price Includes VAT],
+                a.[VAT Bus_ Posting Gr_ (Price)],
+                a.[Gen_ Prod_ Posting Group],
+                a.[Picture],
+                a.[Country_Region of Origin Code],
+                a.[Automatic Ext_ Texts],
+                a.[No_ Series],
+                a.[Tax Group Code],
+                a.[VAT Prod_ Posting Group],
+                a.[Reserve],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Stockout Warning],
+                a.[Prevent Negative Inventory],
+                a.[Application Wksh_ User ID],
+                a.[Assembly Policy],
+                a.[GTIN],
+                a.[Default Deferral Template Code],
+                a.[Low-Level Code],
+                a.[Lot Size],
+                a.[Serial Nos_],
+                a.[Last Unit Cost Calc_ Date],
+                a.[Rolled-up Material Cost],
+                a.[Rolled-up Capacity Cost],
+                a.[Scrap _],
+                a.[Inventory Value Zero],
+                a.[Discrete Order Quantity],
+                a.[Minimum Order Quantity],
+                a.[Maximum Order Quantity],
+                a.[Safety Stock Quantity],
+                a.[Order Multiple],
+                a.[Safety Lead Time],
+                a.[Flushing Method],
+                a.[Replenishment System],
+                a.[Rounding Precision],
+                a.[Sales Unit of Measure],
+                a.[Purch_ Unit of Measure],
+                a.[Time Bucket],
+                a.[Reordering Policy],
+                a.[Include Inventory],
+                a.[Manufacturing Policy],
+                a.[Rescheduling Period],
+                a.[Lot Accumulation Period],
+                a.[Dampener Period],
+                a.[Dampener Quantity],
+                a.[Overflow Level],
+                a.[Manufacturer Code],
+                a.[Item Category Code],
+                a.[Created From Nonstock Item],
+                a.[Product Group Code],
+                a.[Service Item Group],
+                a.[Item Tracking Code],
+                a.[Lot Nos_],
+                a.[Expiration Calculation],
+                a.[Warehouse Class Code],
+                a.[Special Equipment Code],
+                a.[Put-away Template Code],
+                a.[Put-away Unit of Measure Code],
+                a.[Phys Invt Counting Period Code],
+                a.[Last Counting Period Update],
+                a.[Use Cross-Docking],
+                a.[Next Counting Start Date],
+                a.[Next Counting End Date],
+                a.[Kit BOM No_],
+                a.[SAV BOM No_],
+                a.[KitPurchPriceToBeRecalculated],
+                a.[Plan No_],
+                a.[Product dimensions mounted],
+                a.[ABC],
+                a.[Date (ABC)],
+                a.[Alerte],
+                a.[Cod ABCD],
+                a.[Manufacture],
+                a.[Range],
+                a.[Category 1],
+                a.[Category 2],
+                a.[Technical Family],
+                a.[Montat],
+                a.[Is a Prototype],
+                a.[Code Prototype],
+                a.[MrpDate],
+                a.[Status],
+                a.[Life cycle stages],
+                a.[Packages no_],
+                a.[Old No_],
+                a.[Oty_ per pallet],
+                a.[Custom Tax _],
+                a.[Custom Commission _],
+                a.[Full Description],
+                a.[Routing No_],
+                a.[Production BOM No_],
+                a.[Single-Level Material Cost],
+                a.[Single-Level Capacity Cost],
+                a.[Single-Level Subcontrd_ Cost],
+                a.[Single-Level Cap_ Ovhd Cost],
+                a.[Single-Level Mfg_ Ovhd Cost],
+                a.[Overhead Rate],
+                a.[Rolled-up Subcontracted Cost],
+                a.[Rolled-up Mfg_ Ovhd Cost],
+                a.[Rolled-up Cap_ Overhead Cost],
+                a.[Order Tracking Policy],
+                a.[Critical],
+                a.[Common Item No_],
+                a.[FSC],
+                a.[Tip PF],
+                a.[Consumption Scrap _],
+                a.[Production at Location],
+                a.[SAV Manufacture],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Item] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_item');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_item_load</targetTable>
+        <targetCallback>call nav.prc_item_merge_load();</targetCallback>
+    </step>
+    <step name="Item Technical Family" order="8">
+        <targetCallfront>truncate table nav.tbl_int_technical_family__load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Code],
+                a.[Description],
+                a.[Description 2],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Technical Family_] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_technical_family_');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_technical_family__load</targetTable>
+        <targetCallback>call nav.prc_technical_family__load();</targetCallback>
+    </step>
+    <step name="BOM Component" order="9">
+        <targetCallfront>truncate table nav.tbl_int_bom_component_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                [Parent Item No_],
+                [Line No_],
+                [Type],
+                [No_],
+                [Description],
+                [Unit of Measure Code],
+                [Quantity per],
+                [Position],
+                [Position 2],
+                [Position 3],
+                [Machine No_],
+                [Lead-Time Offset],
+                [Resource Usage Type],
+                [Variant Code],
+                [Installed in Line No_],
+                [Installed in Item No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$BOM Component] as a;
+        </sourceQuery>
+        <!-- NO SOURCE QUERY PARAMETER NEEDED -->
+        <sourceQueryParam />
+        <targetTable>nav.tbl_int_bom_component_load</targetTable>
+        <targetCallback>call nav.prc_bom_component_merge_load();</targetCallback>
+    </step>
+    <step name="Production Order" order="10">
+        <targetCallfront>truncate table nav.tbl_int_production_order_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Status],
+                a.[No_],
+                a.[Description],
+                a.[Search Description],
+                a.[Description 2],
+                a.[Creation Date],
+                a.[Last Date Modified],
+                a.[Source Type],
+                a.[Source No_],
+                a.[Routing No_],
+                a.[Inventory Posting Group],
+                a.[Gen_ Prod_ Posting Group],
+                a.[Gen_ Bus_ Posting Group],
+                a.[Starting Time],
+                a.[Starting Date],
+                a.[Ending Time],
+                a.[Ending Date],
+                a.[Due Date],
+                a.[Finished Date],
+                a.[Blocked],
+                a.[Shortcut Dimension 1 Code],
+                a.[Shortcut Dimension 2 Code],
+                a.[Location Code],
+                a.[Bin Code],
+                a.[Replan Ref_ No_],
+                a.[Replan Ref_ Status],
+                a.[Low-Level Code],
+                a.[Quantity],
+                a.[Unit Cost],
+                a.[Cost Amount],
+                a.[No_ Series],
+                a.[Planned Order No_],
+                a.[Firm Planned Order No_],
+                a.[Simulated Order No_],
+                a.[Starting Date-Time],
+                a.[Ending Date-Time],
+                a.[Dimension Set ID],
+                a.[Assigned User ID],
+                a.[Data Primei Planificari],
+                a.[Linked-to Sales Order],
+                a.[Linked-to Sales Order Line],
+                a.[Prod_ Order Finished],
+                a.[Consumption],
+                a.[Responsability Center],
+                a.[Responsability Center 2],
+                a.[All Resp_ Centers],
+                a.[Observation],
+                a.[Print],
+                a.[Released Date],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Production Order] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_production_order');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_production_order_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Production Order Line" order="11">
+        <targetCallfront>truncate table nav.tbl_int_prod_order_line_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Status],
+                a.[Prod_ Order No_],
+                a.[Line No_],
+                a.[Item No_],
+                a.[Variant Code],
+                a.[Description],
+                a.[Description 2],
+                a.[Location Code],
+                a.[Shortcut Dimension 1 Code],
+                a.[Shortcut Dimension 2 Code],
+                a.[Bin Code],
+                a.[Quantity],
+                a.[Finished Quantity],
+                a.[Remaining Quantity],
+                a.[Scrap _],
+                a.[Due Date],
+                a.[Starting Date],
+                a.[Starting Time],
+                a.[Ending Date],
+                a.[Ending Time],
+                a.[Planning Level Code],
+                a.[Priority],
+                a.[Production BOM No_],
+                a.[Routing No_],
+                a.[Inventory Posting Group],
+                a.[Routing Reference No_],
+                a.[Unit Cost],
+                a.[Cost Amount],
+                a.[Unit of Measure Code],
+                a.[Quantity (Base)],
+                a.[Finished Qty_ (Base)],
+                a.[Remaining Qty_ (Base)],
+                a.[Starting Date-Time],
+                a.[Ending Date-Time],
+                a.[Dimension Set ID],
+                a.[Cost Amount (ACY)],
+                a.[Unit Cost (ACY)],
+                a.[Production BOM Version Code],
+                a.[Routing Version Code],
+                a.[Routing Type],
+                a.[Qty_ per Unit of Measure],
+                a.[MPS Order],
+                a.[Planning Flexibility],
+                a.[Indirect Cost _],
+                a.[Overhead Rate],
+                a.[Responsability Center],
+                a.[Confim Production date],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Prod_ Order Line] as a
+            inner join [dbo].[Live_any$Production Order] as b
+            on a.[Status] = b.[Status] and a.[Prod_ Order No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_production_order');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_order_line_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Production Order Component" order="12">
+        <targetCallfront>truncate table nav.tbl_int_prod_order_component_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Status],
+                a.[Prod_ Order No_],
+                a.[Prod_ Order Line No_],
+                a.[Line No_],
+                a.[Item No_],
+                a.[Description],
+                a.[Unit of Measure Code],
+                a.[Quantity],
+                a.[Position],
+                a.[Position 2],
+                a.[Position 3],
+                a.[Lead-Time Offset],
+                a.[Routing Link Code],
+                a.[Scrap _],
+                a.[Variant Code],
+                a.[Expected Quantity],
+                a.[Remaining Quantity],
+                a.[Flushing Method],
+                a.[Location Code],
+                a.[Shortcut Dimension 1 Code],
+                a.[Shortcut Dimension 2 Code],
+                a.[Bin Code],
+                a.[Supplied-by Line No_],
+                a.[Planning Level Code],
+                a.[Item Low-Level Code],
+                a.[Length],
+                a.[Width],
+                a.[Weight],
+                a.[Depth],
+                a.[Calculation Formula],
+                a.[Quantity per],
+                a.[Unit Cost],
+                a.[Cost Amount],
+                a.[Due Date],
+                a.[Due Time],
+                a.[Qty_ per Unit of Measure],
+                a.[Remaining Qty_ (Base)],
+                a.[Quantity (Base)],
+                a.[Expected Qty_ (Base)],
+                a.[Due Date-Time],
+                a.[Dimension Set ID],
+                a.[Original Item No_],
+                a.[Original Variant Code],
+                a.[Qty_ Picked],
+                a.[Qty_ Picked (Base)],
+                a.[Completely Picked],
+                a.[Direct Unit Cost],
+                a.[Indirect Cost _],
+                a.[Overhead Rate],
+                a.[Direct Cost Amount],
+                a.[Overhead Amount],
+                a.[Reserv semif],
+                a.[BOM Quantity per],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Prod_ Order Component] as a
+            inner join [dbo].[Live_any$Production Order] as b
+            on a.[Status] = b.[Status] and a.[Prod_ Order No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_production_order');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_order_component_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Production Order Routing Line" order="13">
+        <targetCallfront>truncate table nav.tbl_int_prod_order_routing_line_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Status],
+                a.[Prod_ Order No_],
+                a.[Routing Reference No_],
+                a.[Routing No_],
+                a.[Operation No_],
+                a.[Next Operation No_],
+                a.[Previous Operation No_],
+                a.[Type],
+                a.[No_],
+                a.[Work Center No_],
+                a.[Work Center Group Code],
+                a.[Description],
+                a.[Setup Time],
+                a.[Run Time],
+                a.[Wait Time],
+                a.[Move Time],
+                a.[Fixed Scrap Quantity],
+                a.[Lot Size],
+                a.[Scrap Factor _],
+                a.[Setup Time Unit of Meas_ Code],
+                a.[Run Time Unit of Meas_ Code],
+                a.[Wait Time Unit of Meas_ Code],
+                a.[Move Time Unit of Meas_ Code],
+                a.[Minimum Process Time],
+                a.[Maximum Process Time],
+                a.[Concurrent Capacities],
+                a.[Send-Ahead Quantity],
+                a.[Routing Link Code],
+                a.[Standard Task Code],
+                a.[Unit Cost per],
+                a.[Recalculate],
+                a.[Sequence No_ (Forward)],
+                a.[Sequence No_ (Backward)],
+                a.[Fixed Scrap Qty_ (Accum_)],
+                a.[Scrap Factor _ (Accumulated)],
+                a.[Sequence No_ (Actual)],
+                a.[Direct Unit Cost],
+                a.[Indirect Cost _],
+                a.[Overhead Rate],
+                a.[Starting Time],
+                a.[Starting Date],
+                a.[Ending Time],
+                a.[Ending Date],
+                a.[Unit Cost Calculation],
+                a.[Input Quantity],
+                a.[Critical Path],
+                a.[Routing Status],
+                a.[Flushing Method],
+                a.[Expected Operation Cost Amt_],
+                a.[Expected Capacity Need],
+                a.[Expected Capacity Ovhd_ Cost],
+                a.[Starting Date-Time],
+                a.[Ending Date-Time],
+                a.[Schedule Manually],
+                a.[Location Code],
+                a.[Open Shop Floor Bin Code],
+                a.[To-Production Bin Code],
+                a.[From-Production Bin Code],
+                a.[Seq],
+                a.[No_of Workers],
+                a.[Estim Machine Time],
+                a.[Estim Workers Time],
+                a.[Description 2],
+                a.[DR Run Time],
+                a.[Net Run Time],
+                a.[Machine Efficiency (_)],
+                a.[Routing Version Code],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Prod_ Order Routing Line] as a
+            inner join [dbo].[Live_any$Production Order] as b
+            on a.[Status] = b.[Status] and a.[Prod_ Order No_] = b.[No_]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_production_order');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_prod_order_routing_line_load</targetTable>
+        <!-- CALLBACK FOR ALL PRODUCTION ORDER TABLES -->
+        <targetCallback>call nav.prc_prod_order_all_merge_load();</targetCallback>
+    </step>
+    <step name="Purchase Price" order="14">
+        <targetCallfront>truncate table nav.tbl_int_purchase_price_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Item No_],
+                a.[Vendor No_],
+                a.[Starting Date],
+                a.[Currency Code],
+                a.[Variant Code],
+                a.[Unit of Measure Code],
+                a.[Minimum Quantity],
+                a.[Location Code],
+                a.[Direct Unit Cost],
+                a.[Ending Date],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Purchase Price] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_purchase_price');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_purchase_price_load</targetTable>
+        <targetCallback>call nav.prc_purchase_price_merge_load();</targetCallback>
+    </step>
+    <step name="Sales Price" order="15">
+        <targetCallfront>truncate table nav.tbl_int_sales_price_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Item No_],
+                a.[Sales Type],
+                a.[Sales Code],
+                a.[Starting Date],
+                a.[Currency Code],
+                a.[Variant Code],
+                a.[Unit of Measure Code],
+                a.[Minimum Quantity],
+                a.[Unit Price],
+                a.[Price Includes VAT],
+                a.[Allow Invoice Disc_],
+                a.[VAT Bus_ Posting Gr_ (Price)],
+                a.[Ending Date],
+                a.[Allow Line Disc_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Sales Price] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_sales_price');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_sales_price_load</targetTable>
+        <targetCallback>call nav.prc_sales_price_merge_load();</targetCallback>
+    </step>
+    <step name="Item unit of measure" order="16">
+        <targetCallfront>truncate table nav.tbl_int_item_umas_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Item No_],
+                a.[Code],
+                a.[Qty_ per Unit of Measure],
+                a.[Length],
+                a.[Width],
+                a.[Height],
+                a.[Cubage],
+                a.[Weight],
+                a.[Packaging Weight],
+                a.[Expanded Polystyren weight],
+                a.[Thinkness],
+                a.[Box weight],
+                a.[Stripe carton weight],
+                a.[Paper weight],
+                a.[Foil weight],
+                a.[PFL_PAL_MDF weight],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Item Unit of Measure] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_item_umas');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_item_umas_load</targetTable>
+        <targetCallback>call nav.prc_item_umas_merge_load();</targetCallback>
+    </step>
+    <step name="Item Ledger Entry" order="17">
+        <targetCallfront>truncate table nav.tbl_int_item_ledger_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[Item No_],
+                a.[Posting Date],
+                a.[Entry Type],
+                a.[Source No_],
+                a.[Document No_],
+                a.[Description],
+                a.[Location Code],
+                a.[Quantity],
+                a.[Remaining Quantity],
+                a.[Invoiced Quantity],
+                a.[Applies-to Entry],
+                a.[Open],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Positive],
+                a.[Source Type],
+                a.[Drop Shipment],
+                a.[Transaction Type],
+                a.[Transport Method],
+                a.[Country_Region Code],
+                a.[Entry_Exit Point],
+                a.[Document Date],
+                a.[External Document No_],
+                a.[Area],
+                a.[Transaction Specification],
+                a.[No_ Series],
+                a.[Document Type],
+                a.[Document Line No_],
+                a.[Order Type],
+                a.[Order No_],
+                a.[Order Line No_],
+                a.[Dimension Set ID],
+                a.[Assemble to Order],
+                a.[Job No_],
+                a.[Job Task No_],
+                a.[Job Purchase],
+                a.[Variant Code],
+                a.[Qty_ per Unit of Measure],
+                a.[Unit of Measure Code],
+                a.[Derived from Blanket Order],
+                a.[Cross-Reference No_],
+                a.[Originally Ordered No_],
+                a.[Originally Ordered Var_ Code],
+                a.[Out-of-Stock Substitution],
+                a.[Item Category Code],
+                a.[Nonstock],
+                a.[Purchasing Code],
+                a.[Product Group Code],
+                a.[Completely Invoiced],
+                a.[Last Invoice Date],
+                a.[Applied Entry to Adjust],
+                a.[Correction],
+                a.[Shipped Qty_ Not Returned],
+                a.[Prod_ Order Comp_ Line No_],
+                a.[Serial No_],
+                a.[Lot No_],
+                a.[Warranty Date],
+                a.[Expiration Date],
+                a.[Item Tracking],
+                a.[Return Reason Code],
+                a.[Discount Reason Code],
+                a.[Order Advertising],
+                a.[EU 3-Party Trade],
+                a.[Tariff No_],
+                a.[Net Weight],
+                a.[Country_Region of Origin Code],
+                a.[Intrastat Transaction],
+                a.[Shipment Method Code],
+                a.[Custom Invoice No_],
+                a.[No_ Of Workers],
+                a.[Workers Qty_],
+                a.[Employee No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Item Ledger Entry] as a
+            where a.[Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_item_ledger_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_item_ledger_entry_load</targetTable>
+        <targetCallback>call nav.prc_item_ledger_entry_merge_load();</targetCallback>
+    </step>
+    <step name="Value Entry" order="18">
+        <targetCallfront>truncate table nav.tbl_int_value_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[Item No_],
+                a.[Posting Date],
+                a.[Item Ledger Entry Type],
+                a.[Source No_],
+                a.[Document No_],
+                a.[Description],
+                a.[Location Code],
+                a.[Inventory Posting Group],
+                a.[Source Posting Group],
+                a.[Item Ledger Entry No_],
+                a.[Valued Quantity],
+                a.[Item Ledger Entry Quantity],
+                a.[Invoiced Quantity],
+                a.[Cost per Unit],
+                a.[Sales Amount (Actual)],
+                a.[Salespers__Purch_ Code],
+                a.[Discount Amount],
+                a.[User ID],
+                a.[Source Code],
+                a.[Applies-to Entry],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Source Type],
+                a.[Cost Amount (Actual)],
+                a.[Cost Posted to G_L],
+                a.[Reason Code],
+                a.[Drop Shipment],
+                a.[Journal Batch Name],
+                a.[Gen_ Bus_ Posting Group],
+                a.[Gen_ Prod_ Posting Group],
+                a.[Document Date],
+                a.[External Document No_],
+                a.[Cost Amount (Actual) (ACY)],
+                a.[Cost Posted to G_L (ACY)],
+                a.[Cost per Unit (ACY)],
+                a.[Document Type],
+                a.[Document Line No_],
+                a.[Order Type],
+                a.[Order No_],
+                a.[Order Line No_],
+                a.[Expected Cost],
+                a.[Item Charge No_],
+                a.[Valued By Average Cost],
+                a.[Partial Revaluation],
+                a.[Inventoriable],
+                a.[Valuation Date],
+                a.[Entry Type],
+                a.[Variance Type],
+                a.[Purchase Amount (Actual)],
+                a.[Purchase Amount (Expected)],
+                a.[Sales Amount (Expected)],
+                a.[Cost Amount (Expected)],
+                a.[Cost Amount (Non-Invtbl_)],
+                a.[Cost Amount (Expected) (ACY)],
+                a.[Cost Amount (Non-Invtbl_)(ACY)],
+                a.[Expected Cost Posted to G_L],
+                a.[Exp_ Cost Posted to G_L (ACY)],
+                a.[Dimension Set ID],
+                a.[Job No_],
+                a.[Job Task No_],
+                a.[Job Ledger Entry No_],
+                a.[Variant Code],
+                a.[Adjustment],
+                a.[Average Cost Exception],
+                a.[Capacity Ledger Entry No_],
+                a.[Type],
+                a.[No_],
+                a.[Return Reason Code],
+                a.[Order Advertising],
+                a.[G_L Correction],
+                a.[Incl_ in Intrastat Amount],
+                a.[Incl_ in Intrastat Stat_ Value],
+                a.[Custom Invoice No_],
+                a.[Correction Cost],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Value Entry] as a
+            where a.[Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_value_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_value_entry_load</targetTable>
+        <targetCallback>call nav.prc_value_entry_merge_load();</targetCallback>
+    </step>
+    <step name="Customer" order="19">
+        <targetCallfront>truncate table nav.tbl_int_customer_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[Name],
+                a.[Search Name],
+                a.[Name 2],
+                a.[Address],
+                a.[Address 2],
+                a.[City],
+                a.[Contact],
+                a.[Phone No_],
+                a.[Telex No_],
+                a.[Document Sending Profile],
+                a.[Our Account No_],
+                a.[Territory Code],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Chain Name],
+                a.[Budgeted Amount],
+                a.[Credit Limit (LCY)],
+                a.[Customer Posting Group],
+                a.[Currency Code],
+                a.[Customer Price Group],
+                a.[Language Code],
+                a.[Statistics Group],
+                a.[Payment Terms Code],
+                a.[Fin_ Charge Terms Code],
+                a.[Salesperson Code],
+                a.[Shipment Method Code],
+                a.[Shipping Agent Code],
+                a.[Place of Export],
+                a.[Invoice Disc_ Code],
+                a.[Customer Disc_ Group],
+                a.[Country_Region Code],
+                a.[Collection Method],
+                a.[Amount],
+                a.[Blocked],
+                a.[Invoice Copies],
+                a.[Last Statement No_],
+                a.[Print Statements],
+                a.[Bill-to Customer No_],
+                a.[Priority],
+                a.[Payment Method Code],
+                a.[Last Date Modified],
+                a.[Application Method],
+                a.[Prices Including VAT],
+                a.[Location Code],
+                a.[Fax No_],
+                a.[Telex Answer Back],
+                a.[VAT Registration No_],
+                a.[Combine Shipments],
+                a.[Gen_ Bus_ Posting Group],
+                a.[GLN],
+                a.[Post Code],
+                a.[County],
+                a.[E-Mail],
+                a.[Home Page],
+                a.[Reminder Terms Code],
+                a.[No_ Series],
+                a.[Tax Area Code],
+                a.[Tax Liable],
+                a.[VAT Bus_ Posting Group],
+                a.[Reserve],
+                a.[Block Payment Tolerance],
+                a.[IC Partner Code],
+                a.[Prepayment _],
+                a.[Partner Type],
+                a.[Image],
+                a.[Preferred Bank Account Code],
+                a.[Cash Flow Payment Terms Code],
+                a.[Primary Contact No_],
+                a.[Responsibility Center],
+                a.[Shipping Advice],
+                a.[Shipping Time],
+                a.[Shipping Agent Service Code],
+                a.[Service Zone Code],
+                a.[Allow Line Disc_],
+                a.[Base Calendar Code],
+                a.[Copy Sell-to Addr_ to Qte From],
+                a.[GPS1 latitude],
+                a.[GPS2 longitude],
+                a.[Delivery Zone],
+                a.[Customer Type],
+                a.[Store Code],
+                a.[Customer Code PGS],
+                a.[Email],
+                a.[Insigna],
+                a.[Posted Invoice Nos_],
+                a.[Posted Credit Memo Nos_],
+                a.[Posted Shipment Nos_],
+                a.[Posted Return Shipment Nos_],
+                a.[Ship-to PGS],
+                a.[Customer no_ 2],
+                a.[Client de magazin],
+                a.[Cod IRIS],
+                a.[Phone No_2],
+                a.[Customer commercial disc_],
+                a.[Invoice per Sales Order],
+                a.[Data inceput Split TVA],
+                a.[Data inceput TVA de plata],
+                a.[Data inceput TVA],
+                a.[Data sfarsit TVA],
+                a.[Data sfarsit TVA de plata],
+                a.[Inactiv],
+                a.[Data inactivare],
+                a.[Data Reactivare],
+                a.[Data anulare Split TVA],
+                a.[VAT to Pay],
+                a.[Registru Plati Defalcate],
+                a.[Lant],
+                a.[Sublant],
+                a.[Aderent No_],
+                a.[Manual Tour Invoice],
+                a.[Franco Limit No_],
+                a.[Default Bank Account Code],
+                a.[Customer Contract No_],
+                a.[Not VAT Registered],
+                a.[Registration No_],
+                a.[Commerce Trade No_],
+                a.[Transaction Type],
+                a.[Transaction Specification],
+                a.[Transport Method],
+                a.[Index Invoice Exchage Rate],
+                a.[Organization type],
+                a.[Tip Partener],
+                a.[Cod Judet D394],
+                a.[Budget category],
+                a.[Network],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Customer] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_customer');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_customer_load</targetTable>
+        <targetCallback>call nav.prc_customer_merge_load();</targetCallback>
+    </step>
+    <step name="Customer Price Group" order="20">
+        <targetCallfront>truncate table nav.tbl_int_customer_price_group_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Code],
+                a.[Price Includes VAT],
+                a.[Allow Invoice Disc_],
+                a.[VAT Bus_ Posting Gr_ (Price)],
+                a.[Description],
+                a.[Allow Line Disc_],
+                a.[Pub Delivery Interval],
+                a.[RDV Report text],
+                a.[Std Delivery Interval],
+                a.[EDI Posted Inv_ Export],
+                a.[DESADV_req],
+                a.[INVOIC_req],
+                a.[ORDRSP_req],
+                a.[Tip rutare],
+                a.[Invoice FTP link],
+                a.[User FTP],
+                a.[Password FTP],
+                a.[RFA _],
+                a.[Shipment FTP link],
+                a.[PAR_BY],
+                a.[Invoice Bank 2],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Customer Price Group] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_customer_price_group');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_customer_price_group_load</targetTable>
+        <targetCallback>call nav.prc_customer_price_group_merge_load();</targetCallback>
+    </step>
+    <step name="Warehouse Entry" order="21">
+        <targetCallfront>truncate table nav.tbl_int_warehouse_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[Journal Batch Name],
+                a.[Line No_],
+                a.[Registering Date],
+                a.[Location Code],
+                a.[Zone Code],
+                a.[Bin Code],
+                a.[Description],
+                a.[Item No_],
+                a.[Quantity],
+                a.[Qty_ (Base)],
+                a.[Source Type],
+                a.[Source Subtype],
+                a.[Source No_],
+                a.[Source Line No_],
+                a.[Source Subline No_],
+                a.[Source Document],
+                a.[Source Code],
+                a.[Reason Code],
+                a.[No_ Series],
+                a.[Bin Type Code],
+                a.[Cubage],
+                a.[Weight],
+                a.[Journal Template Name],
+                a.[Whse_ Document No_],
+                a.[Whse_ Document Type],
+                a.[Whse_ Document Line No_],
+                a.[Entry Type],
+                a.[Reference Document],
+                a.[Reference No_],
+                a.[User ID],
+                a.[Variant Code],
+                a.[Qty_ per Unit of Measure],
+                a.[Unit of Measure Code],
+                a.[Serial No_],
+                a.[Lot No_],
+                a.[Warranty Date],
+                a.[Expiration Date],
+                a.[Phys Invt Counting Period Code],
+                a.[Phys Invt Counting Period Type],
+                a.[Dedicated],
+                a.[Pallet No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Warehouse Entry] as a
+            where a.[Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_warehouse_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_warehouse_entry_load</targetTable>
+        <targetCallback>call nav.prc_warehouse_entry_merge_load();</targetCallback>
+    </step>
+    <step name="Change Log Entry" order="22">
+        <targetCallfront>truncate table nav.tbl_int_change_log_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[Date and Time],
+                a.[Time],
+                a.[User ID],
+                a.[Table No_],
+                a.[Field No_],
+                a.[Type of Change],
+                a.[Old Value],
+                a.[New Value],
+                a.[Primary Key],
+                a.[Primary Key Field 1 No_],
+                a.[Primary Key Field 1 Value],
+                a.[Primary Key Field 2 No_],
+                a.[Primary Key Field 2 Value],
+                a.[Primary Key Field 3 No_],
+                a.[Primary Key Field 3 Value],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Change Log Entry] as a
+            where a.[Entry No_] > ? and
+                ((a.[Table No_] = 5407 and a.[Field No_] = 19) or (a.[Table No_] = 5407 and a.[Field No_] = 45) or (a.[Table No_] = 5409 and a.[Field No_] = 34));
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_change_log_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_change_log_entry_load</targetTable>
+        <targetCallback>call nav.prc_change_log_entry_merge_load();</targetCallback>
+    </step>
+    <step name="Capacity Ledger Entry" order="23">
+        <targetCallfront>truncate table nav.tbl_int_capacity_ledger_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[No_],
+                a.[Posting Date],
+                a.[Type],
+                a.[Document No_],
+                a.[Description],
+                a.[Operation No_],
+                a.[Work Center No_],
+                a.[Quantity],
+                a.[Setup Time],
+                a.[Run Time],
+                a.[Stop Time],
+                a.[Invoiced Quantity],
+                a.[Output Quantity],
+                a.[Scrap Quantity],
+                a.[Concurrent Capacity],
+                a.[Cap_ Unit of Measure Code],
+                a.[Qty_ per Cap_ Unit of Measure],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Last Output Line],
+                a.[Completely Invoiced],
+                a.[Starting Time],
+                a.[Ending Time],
+                a.[Routing No_],
+                a.[Routing Reference No_],
+                a.[Item No_],
+                a.[Variant Code],
+                a.[Unit of Measure Code],
+                a.[Qty_ per Unit of Measure],
+                a.[Document Date],
+                a.[External Document No_],
+                a.[Stop Code],
+                a.[Scrap Code],
+                a.[Work Center Group Code],
+                a.[Work Shift Code],
+                a.[Subcontracting],
+                a.[Order Type],
+                a.[Order No_],
+                a.[Order Line No_],
+                a.[Dimension Set ID],
+                a.[No_ Of Workers],
+                a.[Workers Qty_],
+                a.[Employee No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Capacity Ledger Entry] as a
+            where a.[Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_capacity_ledger_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_capacity_ledger_entry_load</targetTable>
+        <targetCallback>call nav.prc_capacity_ledger_entry_merge_load();</targetCallback>
+    </step>
+    <step name="Machine Production Declaration" order="24">
+        <targetCallfront>truncate table nav.tbl_int_machine_prod_declar_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Machine Center No_],
+                a.[Date],
+                a.[Work Shift],
+                a.[Declaration Status],
+                a.[Responsibility Center],
+                a.[Location Code],
+                a.[Created By],
+                a.[Validated By],
+                a.[Employee No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Machine Production Declaration] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_machine_prod_declar');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_machine_prod_declar_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Machine Production Declaration Lines" order="25">
+        <targetCallfront>truncate table nav.tbl_int_machine_prod_declar_line_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Machine Center No_],
+                a.[Date],
+                a.[Work Shift],
+                a.[Line No_],
+                a.[Prod_ Order No_],
+                a.[Prod_ Order Line],
+                a.[Routing No_],
+                a.[Operation No_],
+                a.[Prod_ Order Item No_],
+                a.[Setup Start],
+                a.[Setup End],
+                a.[Run Start],
+                a.[Run End],
+                a.[Runtime Min_],
+                a.[Setup Time Min_],
+                a.[Conf_ Qty_],
+                a.[Scrap Qty_],
+                a.[No_of Workers],
+                a.[Time per Piece],
+                a.[Scrap Code],
+                a.[Scrap Commets],
+                a.[Repair Code],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Machine Production Declar_Line] as a
+            inner join [dbo].[Live_any$Machine Production Declaration] as b
+            on a.[Machine Center No_] = b.[Machine Center No_] and a.[Date] = b.[Date] and a.[Work Shift] = b.[Work Shift]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_machine_prod_declar');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_machine_prod_declar_line_load</targetTable>
+        <!-- NO CALLBACK HERE -->
+        <targetCallback />
+    </step>
+    <step name="Machine Production Declaration Indirect Time" order="26">
+        <targetCallfront>truncate table nav.tbl_int_machine_prod_declar_indir_time_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Machine Center No_],
+                a.[Date],
+                a.[Work Shift],
+                a.[Line No_],
+                a.[Stop Code],
+                a.[Observations],
+                a.[Stop Start],
+                a.[Stop End],
+                a.[Indirect Time Min_],
+                a.[No_of Workers],
+                a.[Item No_ Stacked],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Machine Prod_Declar_Indir_Time] as a
+            inner join [dbo].[Live_any$Machine Production Declaration] as b
+            on a.[Machine Center No_] = b.[Machine Center No_] and a.[Date] = b.[Date] and a.[Work Shift] = b.[Work Shift]
+            where cast(b.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_machine_prod_declar');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_machine_prod_declar_indir_time_load</targetTable>
+        <!-- CALLBACK FOR ALL MACHINE DECLARATION TABLES -->
+        <targetCallback>call nav.prc_machine_prod_declar_all_merge_load();</targetCallback>
+    </step>
+    <step name="Vendor" order="27">
+        <targetCallfront>truncate table nav.tbl_int_vendor_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[Name],
+                a.[Search Name],
+                a.[Name 2],
+                a.[Address],
+                a.[Address 2],
+                a.[City],
+                a.[Contact],
+                a.[Phone No_],
+                a.[Telex No_],
+                a.[Our Account No_],
+                a.[Territory Code],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Budgeted Amount],
+                a.[Vendor Posting Group],
+                a.[Currency Code],
+                a.[Language Code],
+                a.[Statistics Group],
+                a.[Payment Terms Code],
+                a.[Fin_ Charge Terms Code],
+                a.[Purchaser Code],
+                a.[Shipment Method Code],
+                a.[Shipping Agent Code],
+                a.[Invoice Disc_ Code],
+                a.[Country_Region Code],
+                a.[Blocked],
+                a.[Pay-to Vendor No_],
+                a.[Priority],
+                a.[Payment Method Code],
+                a.[Last Date Modified],
+                a.[Application Method],
+                a.[Prices Including VAT],
+                a.[Fax No_],
+                a.[Telex Answer Back],
+                a.[VAT Registration No_],
+                a.[Gen_ Bus_ Posting Group],
+                a.[GLN],
+                a.[Post Code],
+                a.[County],
+                a.[E-Mail],
+                a.[Home Page],
+                a.[No_ Series],
+                a.[Tax Area Code],
+                a.[Tax Liable],
+                a.[VAT Bus_ Posting Group],
+                a.[Block Payment Tolerance],
+                a.[IC Partner Code],
+                a.[Prepayment _],
+                a.[Partner Type],
+                a.[Creditor No_],
+                a.[Preferred Bank Account Code],
+                a.[Cash Flow Payment Terms Code],
+                a.[Primary Contact No_],
+                a.[Responsibility Center],
+                a.[Location Code],
+                a.[Lead Time Calculation],
+                a.[Base Calendar Code],
+                a.[Document Sending Profile],
+                a.[Identificator fabrica],
+                a.[Default Bank Account Code],
+                a.[Not VAT Registered],
+                a.[Registration No_],
+                a.[Commerce Trade No_],
+                a.[Transaction Type],
+                a.[Transaction Specification],
+                a.[Transport Method],
+                a.[Currency Transformation Index],
+                a.[VAT to Pay],
+                a.[Tip Partener],
+                a.[Cod Judet D394],
+                a.[Organization type],
+                a.[Data inceput Split TVA],
+                a.[Data inceput TVA de plata],
+                a.[Data inceput TVA],
+                a.[Data sfarsit TVA],
+                a.[Data sfarsit TVA de plata],
+                a.[Inactiv],
+                a.[Data inactivare],
+                a.[Data Reactivare],
+                a.[Data anulare Split TVA],
+                a.[Registru Plati Defalcate],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$Vendor] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_vendor');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_vendor_load</targetTable>
+        <targetCallback>call nav.prc_vendor_merge_load();</targetCallback>
+    </step>
+    <step name="G/L Account" order="28">
+        <targetCallfront>truncate table nav.tbl_int_gl_account_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[No_],
+                a.[Name],
+                a.[Search Name],
+                a.[Account Type],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[Account Category],
+                a.[Income_Balance],
+                a.[Debit_Credit],
+                a.[No_ 2],
+                a.[Blocked],
+                a.[Direct Posting],
+                a.[Reconciliation Account],
+                a.[New Page],
+                a.[No_ of Blank Lines],
+                a.[Indentation],
+                a.[Last Date Modified],
+                a.[Totaling],
+                a.[Consol_ Translation Method],
+                a.[Consol_ Debit Acc_],
+                a.[Consol_ Credit Acc_],
+                a.[Gen_ Posting Type],
+                a.[Gen_ Bus_ Posting Group],
+                a.[Gen_ Prod_ Posting Group],
+                a.[Automatic Ext_ Texts],
+                a.[Tax Area Code],
+                a.[Tax Liable],
+                a.[Tax Group Code],
+                a.[VAT Bus_ Posting Group],
+                a.[VAT Prod_ Posting Group],
+                a.[Exchange Rate Adjustment],
+                a.[Default IC Partner G_L Acc_ No],
+                a.[Omit Default Descr_ in Jnl_],
+                a.[Account Subcategory Entry No_],
+                a.[Cost Type No_],
+                a.[Default Deferral Template Code],
+                a.[Analytic_Synthetic1_Synthetic2],
+                a.[Closing Account],
+                a.[Check Posting Debit_Credit],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$G_L Account] as a
+            where cast(a.[timestamp] as bigint) > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_gl_account');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_gl_account_load</targetTable>
+        <targetCallback>call nav.prc_gl_account_merge_load();</targetCallback>
+    </step>
+    <step name="G/L Entry" order="29">
+        <targetCallfront>truncate table nav.tbl_int_gl_entry_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[Entry No_],
+                a.[G_L Account No_],
+                a.[Posting Date],
+                a.[Document Type],
+                a.[Document No_],
+                a.[Description],
+                a.[Bal_ Account No_],
+                a.[Amount],
+                a.[Global Dimension 1 Code],
+                a.[Global Dimension 2 Code],
+                a.[User ID],
+                a.[Source Code],
+                a.[System-Created Entry],
+                a.[Prior-Year Entry],
+                a.[Job No_],
+                a.[Quantity],
+                a.[VAT Amount],
+                a.[Business Unit Code],
+                a.[Journal Batch Name],
+                a.[Reason Code],
+                a.[Gen_ Posting Type],
+                a.[Gen_ Bus_ Posting Group],
+                a.[Gen_ Prod_ Posting Group],
+                a.[Bal_ Account Type],
+                a.[Transaction No_],
+                a.[Debit Amount],
+                a.[Credit Amount],
+                a.[Document Date],
+                a.[External Document No_],
+                a.[Source Type],
+                a.[Source No_],
+                a.[No_ Series],
+                a.[Tax Area Code],
+                a.[Tax Liable],
+                a.[Tax Group Code],
+                a.[Use Tax],
+                a.[VAT Bus_ Posting Group],
+                a.[VAT Prod_ Posting Group],
+                a.[Additional-Currency Amount],
+                a.[Add_-Currency Debit Amount],
+                a.[Add_-Currency Credit Amount],
+                a.[Close Income Statement Dim_ ID],
+                a.[IC Partner Code],
+                a.[Reversed],
+                a.[Reversed by Entry No_],
+                a.[Reversed Entry No_],
+                a.[Dimension Set ID],
+                a.[Prod_ Order No_],
+                a.[FA Entry Type],
+                a.[FA Entry No_],
+                a.[Custom Invoice No_],
+                a.[Transfer Self-Invoice],
+                a.[Amount (FCY)],
+                a.[Debit Amount (FCY)],
+                a.[Credit Amount (FCY)],
+                a.[Currency Code],
+                a.[Currency Factor],
+                a.[Value Entry No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$G_L Entry] as a
+            where a.[Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_gl_entry');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_gl_entry_load</targetTable>
+        <targetCallback>call nav.prc_gl_entry_merge_load();</targetCallback>
+    </step>
+    <step name="G/L Item Ledger Relation" order="30">
+        <targetCallfront>truncate table nav.tbl_int_gl_item_ledger_relation_load;</targetCallfront>
+        <sourceQuery>
+            select
+                cast(a.[timestamp] as bigint) as [timestamp],
+                a.[G_L Entry No_],
+                a.[Value Entry No_],
+                a.[G_L Register No_],
+                current_timestamp as mod_de
+            from [dbo].[Live_any$G_L - Item Ledger Relation] as a
+            where a.[G_L Entry No_] > ?;
+        </sourceQuery>
+        <sourceQueryParam>
+            select rowvers from nav.fnc_last_rowvers_get('nav.tbl_int_gl_item_ledger_relation');
+        </sourceQueryParam>
+        <targetTable>nav.tbl_int_gl_item_ledger_relation_load</targetTable>
+        <targetCallback>call nav.prc_gl_item_ledger_relation_merge_load();</targetCallback>
+    </step>
+</queries>

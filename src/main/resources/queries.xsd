@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://catalin.anyinternational.com"
+           xmlns="http://catalin.anyinternational.com"
+           elementFormDefault="qualified">
+    
+    <!-- definition of simple elements -->
+    <xs:element name="sourceQuery" type="xs:string">
+        <xs:annotation>
+            <xs:appinfo>MS NAV 2017 ELT to Postgresql</xs:appinfo>
+            <xs:documentation xml:lang="en">The T-SQL query in Microsoft Dynamics Navision 2017 for obtaining the source records.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="sourceQueryParam" type="xs:string"/>
+    <xs:element name="targetTable" type="xs:string"/>
+    <xs:element name="targetCallfront" type="xs:string"/>
+    <xs:element name="targetCallback" type="xs:string"/>
+    
+    <!-- definition of complex elements -->
+    <xs:element name="step">
+        <xs:complexType>
+            <xs:all>
+                <xs:element ref="targetCallfront"/>
+                <xs:element ref="sourceQuery"/>
+                <xs:element ref="sourceQueryParam"/>
+                <xs:element ref="targetTable"/>
+                <xs:element ref="targetCallback"/>
+            </xs:all>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="order" type="xs:positiveInteger" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- definition of parent element -->
+    <xs:element name="queries">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="step" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
